@@ -1,5 +1,8 @@
 # build output
 dist/
+
+expand/
+
 # generated types
 .astro/
 
@@ -19,3 +22,5 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+

@@ -1,10 +1,10 @@
-import type { StarlightPlugin } from '@astrojs/starlight/types'
+import type { StarlightPlugin, HookParameters } from '@astrojs/starlight/types'
 
 export default function expressiveCodeCollapsible(): StarlightPlugin {
   return {
     name: 'expressive-code-collapsible',
     hooks: {
-      'config:setup'({ logger }) {
+      'config:setup'({ logger }: HookParameters<'config:setup'>) {
         /**
          * This is the entry point of your Starlight plugin.
          * The `config:setup` hook is called when Starlight is initialized (during the Astro `astro:config:setup`
