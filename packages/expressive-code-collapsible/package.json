@@ -1,6 +1,6 @@
 {
   "name": "expressive-code-collapsible",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "description": "An Expressive Code plugin to expand or collapse code blocks.",
   "author": "frostybee",
