@@ -7,6 +7,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'Expressive Code Collapsible',
+      favicon: '/images/expand.svg',     
       description: 'Collapsible code blocks plugin for Expressive Code. Automatically collapse long code blocks with expand/collapse controls.',
       editLink: {
         baseUrl: 'https://github.com/frostybee/expressive-code-collapsible/edit/main/docs/',
