@@ -7,5 +7,5 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["expressive-code-collapsible/docs"]
+  "ignore": ["expressive-code-collapsible-docs"]
 }
