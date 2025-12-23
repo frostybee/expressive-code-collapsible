@@ -1,0 +1,285 @@
+---
+title: Examples
+description: Test the collapsible code blocks plugin
+---
+
+## Short Code Block (No Collapse)
+
+This block has fewer than 15 lines, so it won't collapse automatically:
+
+```js
+function greet(name) {
+  return `Hello, ${name}!`;
+}
+
+console.log(greet("World"));
+```
+
+## Long Code Block (Auto-Collapse)
+
+This block has more than 15 lines, so it will collapse automatically:
+
+```typescript
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+  authorId: number;
+  published: boolean;
+}
+
+class UserService {
+  private users: User[] = [];
+
+  async createUser(data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
+    const user: User = {
+      id: this.users.length + 1,
+      ...data,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.users.push(user);
+    return user;
+  }
+
+  async findById(id: number): Promise<User | undefined> {
+    return this.users.find(user => user.id === id);
+  }
+
+  async findAll(): Promise<User[]> {
+    return this.users;
+  }
+
+  async updateUser(id: number, data: Partial<User>): Promise<User | undefined> {
+    const index = this.users.findIndex(user => user.id === id);
+    if (index === -1) return undefined;
+
+    this.users[index] = {
+      ...this.users[index],
+      ...data,
+      updatedAt: new Date(),
+    };
+    return this.users[index];
+  }
+
+  async deleteUser(id: number): Promise<boolean> {
+    const index = this.users.findIndex(user => user.id === id);
+    if (index === -1) return false;
+
+    this.users.splice(index, 1);
+    return true;
+  }
+}
+
+export const userService = new UserService();
+```
+
+## Per-Block Overrides
+
+You can override the default collapse behavior for individual code blocks using meta strings.
+
+### Force Collapse (Short Block)
+
+Use the `collapse` meta string to force a code block to be collapsible, even if it has fewer lines than the threshold. This block only has 3 lines but is still collapsible:
+
+````md
+```js collapse
+````
+
+```js collapse
+const x = 1;
+const y = 2;
+console.log(x + y);
+```
+
+### Prevent Collapse (Long Block)
+
+Use the `nocollapse` meta string to prevent a code block from being collapsible, even if it exceeds the threshold. This block has many lines but remains fully visible:
+
+````md
+```python nocollapse
+````
+
+```python nocollapse
+class DataProcessor:
+    def __init__(self, data):
+        self.data = data
+        self.processed = False
+
+    def validate(self):
+        if not self.data:
+            raise ValueError("Data cannot be empty")
+        return True
+
+    def transform(self):
+        self.data = [item.upper() for item in self.data]
+        return self
+
+    def filter(self, predicate):
+        self.data = [item for item in self.data if predicate(item)]
+        return self
+
+    def process(self):
+        self.validate()
+        self.transform()
+        self.processed = True
+        return self.data
+
+
+processor = DataProcessor(["hello", "world", "test"])
+result = processor.process()
+print(result)
+```
+
+## Code Block with Title (Frame Header Button)
+
+This code block has a title, so it will show both the frame header "Expand" button and the overlay "Show more" button:
+
+```typescript title="src/services/userService.ts"
+import { db } from '../database';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: 'admin' | 'user' | 'guest';
+}
+
+export class UserService {
+  async findAll(): Promise<User[]> {
+    return db.query('SELECT * FROM users');
+  }
+
+  async findById(id: number): Promise<User | null> {
+    const result = await db.query('SELECT * FROM users WHERE id = ?', [id]);
+    return result[0] || null;
+  }
+
+  async create(data: Omit<User, 'id'>): Promise<User> {
+    const result = await db.query(
+      'INSERT INTO users (name, email, role) VALUES (?, ?, ?)',
+      [data.name, data.email, data.role]
+    );
+    return { id: result.insertId, ...data };
+  }
+
+  async update(id: number, data: Partial<User>): Promise<User | null> {
+    await db.query('UPDATE users SET ? WHERE id = ?', [data, id]);
+    return this.findById(id);
+  }
+
+  async delete(id: number): Promise<boolean> {
+    const result = await db.query('DELETE FROM users WHERE id = ?', [id]);
+    return result.affectedRows > 0;
+  }
+}
+```
+
+## Terminal Frame (Header Button)
+
+Terminal-style code blocks also get the header button:
+
+```bash title="Install dependencies"
+# Install with npm
+npm install @expressive-code/core
+npm install expressive-code-collapsible
+
+# Or with pnpm
+pnpm add @expressive-code/core
+pnpm add expressive-code-collapsible
+
+# Or with yarn
+yarn add @expressive-code/core
+yarn add expressive-code-collapsible
+
+# Or with bun
+bun add @expressive-code/core
+bun add expressive-code-collapsible
+
+# Verify installation
+npm list @expressive-code/core
+npm list expressive-code-collapsible
+
+# Check versions
+npm show @expressive-code/core version
+npm show expressive-code-collapsible version
+```
+
+## Another Long Example
+
+Here's a CSS example that will auto-collapse:
+
+```css
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #10b981;
+  --background-color: #1f2937;
+  --text-color: #f9fafb;
+  --border-radius: 8px;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+}
+
+.card {
+  background: var(--background-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.card-body {
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.button:hover {
+  background: #2563eb;
+}
+
+.button:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+```

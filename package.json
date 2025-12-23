@@ -8,7 +8,7 @@
   "engines": {
     "node": "^18.17.1 || ^20.3.0 || >=21.0.0"
   },
-  "packageManager": "pnpm@10.10.0",
+  "packageManager": "pnpm@10.26.0",
   "private": true,
   "sideEffects": false,
   "devDependencies": {
@@ -16,7 +16,8 @@
     "eslint": "^9.39.2",
     "prettier": "^3.7.4",
     "prettier-plugin-astro": "^0.14.1",
-    "tsup": "^8.5.1"
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@changesets/changelog-github": "^0.5.2",
@@ -24,8 +25,10 @@
   },
   "scripts": {
     "build": "pnpm -F expressive-code-collapsible build",
+    "test": "pnpm -F expressive-code-collapsible test",
     "build:docs": "pnpm -F expressive-code-collapsible-docs build",
-    "start:docs": "pnpm -F expressive-code-collapsible-docs start",
+    "start:docs": "pnpm -F expressive-code-collapsible-docs start",    
+    "test:watch": "pnpm -F expressive-code-collapsible test:watch",
     "ci-version": "changeset version && pnpm install --no-frozen-lockfile",
     "ci-publish": "pnpm build && changeset publish"
   },

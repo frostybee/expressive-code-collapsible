@@ -1,0 +1,96 @@
+---
+title: Configuration
+---
+
+The plugin can be configured with global options and per-block overrides using meta strings.
+
+## Global Options
+
+Pass an options object to `expressiveCodeCollapsible()` in your Astro config:
+
+```js 
+// astro.config.mjs
+import starlight from '@astrojs/starlight'
+import { defineConfig } from 'astro/config'
+import expressiveCodeCollapsible from 'expressive-code-collapsible'
+
+export default defineConfig({
+  integrations: [
+    starlight({
+      expressiveCode: {
+        plugins: [
+          expressiveCodeCollapsible({
+            lineThreshold: 15,
+            previewLines: 8,
+            defaultCollapsed: true,
+            expandButtonText: 'Show more',
+            collapseButtonText: 'Show less',
+          }),
+        ],
+      },
+      title: 'My Docs',
+    }),
+  ],
+})
+```
+
+### `lineThreshold`
+
+**Type:** `number`
+**Default:** `15`
+
+Minimum number of lines required to trigger auto-collapse. Code blocks with fewer lines will not be collapsible unless the `collapse` meta string is explicitly added.
+
+### `previewLines`
+
+**Type:** `number`
+**Default:** `8`
+
+Number of lines visible when the code block is collapsed. This determines how much of the code is shown before the user expands the block.
+
+### `defaultCollapsed`
+
+**Type:** `boolean`
+**Default:** `true`
+
+Whether code blocks should start in the collapsed state. Set to `false` if you want collapsible blocks to be expanded by default.
+
+### `expandButtonText`
+
+**Type:** `string`
+**Default:** `"Show more"`
+
+Text displayed on the overlay button when the code block is collapsed. This is the button that appears at the bottom of the collapsed code block.
+
+### `collapseButtonText`
+
+**Type:** `string`
+**Default:** `"Show less"`
+
+Text displayed on the overlay button when the code block is expanded. This is the button that appears at the bottom of the expanded code block.
+
+## Per-Block Overrides
+
+You can override the collapse behavior for individual code blocks using meta strings.
+
+### `collapse`
+
+Force a code block to be collapsible, regardless of its line count. Useful when you want to collapse a short but less relevant code snippet.
+
+````md
+```js collapse
+const x = 1;
+```
+````
+
+### `nocollapse`
+
+Prevent a code block from being collapsible, even if it exceeds the `lineThreshold`. Useful when you want to ensure important code is always fully visible.
+
+````md
+```js nocollapse
+// This code will always be fully visible
+```
+````
+
+See live examples of these overrides on the [Examples](/expressive-code-collapsible/demos/examples/#force-collapse-short-block) page.

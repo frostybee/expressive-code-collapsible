@@ -2,7 +2,18 @@
 title: Getting Started
 ---
 
-An Expressive Code plugin to expand or collapse code blocks.
+Collapsible code blocks plugin for Expressive Code. Automatically collapse long code blocks with expand/collapse controls.
+
+## Features
+
+This plugin adds collapsible functionality to Expressive Code blocks. Here's what it offers:
+
+- Code blocks exceeding a configurable line threshold (default: 15 lines) automatically collapse to save space.
+- Add the `collapse` meta string to any code block to make it collapsible, regardless of length.
+- Add the `nocollapse` meta string to keep a code block fully expanded, even if it's long.
+- Collapsed blocks show both a "Show more" overlay button and an "Expand" button in the frame header (when a title is present).
+- Expanding and collapsing transitions are animated for a polished experience.
+- Supports regular code blocks, titled blocks, and terminal-style blocks.
 
 ## Prerequisites
 

@@ -15,8 +15,10 @@
   "dependencies": {
     "@astrojs/starlight": "^0.37.1",
     "astro": "^5.16.6",
-    "sharp": "^0.34.5",
-    "expressive-code-collapsible": "workspace:*"
+    "expressive-code-collapsible": "workspace:*",
+    "expressive-code-fullscreen": "file:..\\..\\expressive-code-fullscreen\\packages\\expressive-code-fullscreen",
+    "expressive-code-language-badge": "^1.1.0",
+    "sharp": "^0.34.5"
   },
   "engines": {
     "node": "^18.17.1 || ^20.3.0 || >=21.0.0"
