@@ -28,7 +28,7 @@ jobs:
 
       - run: pnpm i
 
-      - uses: changesets/action@c8bada60c408975afd63a545b55a9b674fc1694d # v1.4.9
+      - uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba # v1.5.3
         with:
           version: pnpm run ci-version
           publish: pnpm run ci-publish

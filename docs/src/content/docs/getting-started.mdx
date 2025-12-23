@@ -1,79 +1,117 @@
 ---
 title: Getting Started
+description: How to install and use the Expressive Code Collapsible plugin in your website.
 ---
 
-Collapsible code blocks plugin for Expressive Code. Automatically collapse long code blocks with expand/collapse controls.
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+import { PackageManagers } from 'starlight-package-managers';
 
-## Features
+The Collapsible plugin enhances [Expressive Code](https://expressive-code.com/) blocks on your website by automatically collapsing long code blocks with expand/collapse controls, keeping your documentation clean and readable.
 
-This plugin adds collapsible functionality to Expressive Code blocks. Here's what it offers:
+This guide will show you how to add it to your website.
 
-- Code blocks exceeding a configurable line threshold (default: 15 lines) automatically collapse to save space.
-- Add the `collapse` meta string to any code block to make it collapsible, regardless of length.
-- Add the `nocollapse` meta string to keep a code block fully expanded, even if it's long.
-- Collapsed blocks show both a "Show more" overlay button and an "Expand" button in the frame header (when a title is present).
-- Expanding and collapsing transitions are animated for a polished experience.
-- Supports regular code blocks, titled blocks, and terminal-style blocks.
-
-## Prerequisites
-
-You will need to have a Starlight website set up.
-If you don't have one yet, you can follow the ["Getting Started"](https://starlight.astro.build/getting-started) guide in the Starlight docs to create one.
-
-## Installation
-
-import { Steps, Tabs, TabItem } from '@astrojs/starlight/components'
+## Set-up
 
 <Steps>
 
-1. `expressive-code-collapsible` is a Starlight [plugin](https://starlight.astro.build/reference/plugins/). Install it by running the following command in your terminal:
+1. Install the `expressive-code-collapsible` dependency using your preferred package manager:
 
-   <Tabs syncKey="pkg">
+   <PackageManagers pkg="expressive-code-collapsible" />
 
-   <TabItem label="npm">
+2. Add the plugin to your site's Expressive Code configuration:
 
-   ```sh
-   npm install expressive-code-collapsible
-   ```
-
-   </TabItem>
-
-   <TabItem label="pnpm">
-
-   ```sh
-   pnpm add expressive-code-collapsible
-   ```
-
-   </TabItem>
-
-   <TabItem label="Yarn">
-
-   ```sh
-   yarn add expressive-code-collapsible
-   ```
-
-   </TabItem>
-
-   </Tabs>
-
-2. Configure the plugin in your Starlight [configuration](https://starlight.astro.build/reference/configuration/#plugins) in the `astro.config.mjs` file.
-
-   ```diff lang="js"
+   <Tabs>
+   <TabItem label="Astro">
+   ```js
    // astro.config.mjs
-   import starlight from '@astrojs/starlight'
-   import { defineConfig } from 'astro/config'
-   +import expressiveCodeCollapsible from 'expressive-code-collapsible'
+   import { defineConfig } from 'astro/config';
+   import astroExpressiveCode from 'astro-expressive-code';
+   import { pluginCollapsible } from 'expressive-code-collapsible';
+
+   export default defineConfig({
+     integrations: [
+       astroExpressiveCode({
+         plugins: [pluginCollapsible()],
+       }),
+     ],
+   });
+   ```
+   </TabItem>
+
+   <TabItem label="Starlight">
+   ```js
+   // astro.config.mjs
+   import { defineConfig } from 'astro/config';
+   import starlight from '@astrojs/starlight';
+   import { pluginCollapsible } from 'expressive-code-collapsible';
 
    export default defineConfig({
      integrations: [
        starlight({
-   +      plugins: [expressiveCodeCollapsible()],
-         title: 'My Docs',
+         title: 'My Starlight site',
+         expressiveCode: {
+           plugins: [pluginCollapsible()],
+         },
        }),
      ],
-   })
+   });
    ```
+   </TabItem>
 
-3. [Start the development server](https://starlight.astro.build/getting-started/#start-the-development-server) to preview the plugin in action.
+   <TabItem label="Next.js">
+   ```js
+   // next.config.mjs
+   import createMDX from '@next/mdx';
+   import rehypeExpressiveCode from 'rehype-expressive-code';
+   import { pluginCollapsible } from 'expressive-code-collapsible';
+
+   /** @type {import('rehype-expressive-code').RehypeExpressiveCodeOptions} */
+   const rehypeExpressiveCodeOptions = {
+     plugins: [pluginCollapsible()],
+   };
+
+   /** @type {import('next').NextConfig} */
+   const nextConfig = {
+     reactStrictMode: true,
+     pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
+   };
+
+   const withMDX = createMDX({
+     extension: /\.mdx?$/,
+     options: {
+       remarkPlugins: [],
+       rehypePlugins: [
+         // The nested array structure is required to pass options
+         // to a rehype plugin
+         [rehypeExpressiveCode, rehypeExpressiveCodeOptions],
+       ],
+     },
+   });
+
+   export default withMDX(nextConfig);
+   ```
+   </TabItem>
+
+   <TabItem label="EC config file">
+   ```js
+   // ec.config.mjs
+   import { pluginCollapsible } from 'expressive-code-collapsible';
+
+   export default {
+     plugins: [pluginCollapsible()],
+   };
+   ```
+   </TabItem>
+   </Tabs>
+
+3. That's it! The Collapsible plugin works out of the box with sensible defaults.
 
 </Steps>
+
+## Usage
+
+For more information on how to configure the plugin, see the [Configuration](/expressive-code-collapsible/configuration) page.
+
+## Support
+
+This plugin is open-source software licensed under the MIT license. If you run into any bugs, please [report issues on GitHub](https://github.com/frostybee/expressive-code-collapsible/issues).

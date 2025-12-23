@@ -9,6 +9,8 @@ export const DEFAULT_OPTIONS: Required<PluginCollapsibleOptions> = {
   defaultCollapsed: true,
   expandButtonText: 'Show more',
   collapseButtonText: 'Show less',
+  expandedAnnouncement: 'Code block expanded',
+  collapsedAnnouncement: 'Code block collapsed',
 }
 
 /**
@@ -36,6 +38,14 @@ export function resolveOptions(
       typeof options.collapseButtonText === 'string' && options.collapseButtonText.trim()
         ? options.collapseButtonText
         : DEFAULT_OPTIONS.collapseButtonText,
+    expandedAnnouncement:
+      typeof options.expandedAnnouncement === 'string' && options.expandedAnnouncement.trim()
+        ? options.expandedAnnouncement
+        : DEFAULT_OPTIONS.expandedAnnouncement,
+    collapsedAnnouncement:
+      typeof options.collapsedAnnouncement === 'string' && options.collapsedAnnouncement.trim()
+        ? options.collapsedAnnouncement
+        : DEFAULT_OPTIONS.collapsedAnnouncement,
   }
 }
 

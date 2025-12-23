@@ -1,10 +1,5 @@
 import starlight from '@astrojs/starlight'
 import { defineConfig } from 'astro/config'
-import { pluginCollapsible } from 'expressive-code-collapsible'
-import { pluginLanguageBadge } from 'expressive-code-language-badge';
-import { pluginFullscreen } from 'expressive-code-fullscreen';
-
-
 
 export default defineConfig({
   site: 'https://frostybee.github.io',
@@ -15,12 +10,6 @@ export default defineConfig({
       description: 'Collapsible code blocks plugin for Expressive Code. Automatically collapse long code blocks with expand/collapse controls.',
       editLink: {
         baseUrl: 'https://github.com/frostybee/expressive-code-collapsible/edit/main/docs/',
-      },
-      expressiveCode: {
-        plugins: [
-          pluginCollapsible(), 
-          pluginLanguageBadge(),           
-          pluginFullscreen()],
       },
       sidebar: [
         {

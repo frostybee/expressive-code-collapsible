@@ -36,7 +36,7 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
         background: linear-gradient(
           to bottom,
           transparent 0%,
-          var(--ec-collapse-bg-color, #020110) 100%
+          var(--ec-collapse-bg-color, var(--code-background, #020110)) 100%
         );
         pointer-events: none;
         opacity: 1;
@@ -59,7 +59,7 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
         background-color: rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 20px;
-        color: var(--sl-color-accent, #3b82f6);
+        color: var(--ec-collapse-accent-color, var(--sl-color-accent, var(--accent-color, #3b82f6)));
         font-size: 0.85rem;
         font-weight: 500;
         cursor: pointer;
@@ -86,7 +86,7 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
       }
 
       .ec-collapse__toggle:focus-visible {
-        outline: 2px solid var(--sl-color-accent, #3b82f6);
+        outline: 2px solid var(--ec-collapse-accent-color, var(--sl-color-accent, var(--accent-color, #3b82f6)));
         outline-offset: 2px;
       }
 
@@ -110,11 +110,13 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
         display: inline;
       }
 
+      /* Light theme support - multiple detection methods */
+      /* Method 1: Starlight data-theme attribute */
       :root[data-theme="light"] .ec-collapse__gradient {
         background: linear-gradient(
           to bottom,
           transparent 0%,
-          var(--ec-collapse-bg-color, #f6f7f9) 100%
+          var(--ec-collapse-bg-color, var(--code-background, #f6f7f9)) 100%
         );
       }
 
@@ -128,12 +130,61 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
         border-color: rgba(0, 0, 0, 0.25);
       }
 
+      /* Method 2: Common class-based theme detection */
+      html.light .ec-collapse__gradient,
+      html:not(.dark) body.light .ec-collapse__gradient,
+      [data-theme="light"] .ec-collapse__gradient,
+      [data-color-scheme="light"] .ec-collapse__gradient {
+        background: linear-gradient(
+          to bottom,
+          transparent 0%,
+          var(--ec-collapse-bg-color, var(--code-background, #f6f7f9)) 100%
+        );
+      }
+
+      html.light .ec-collapse__toggle,
+      html:not(.dark) body.light .ec-collapse__toggle,
+      [data-theme="light"] .ec-collapse__toggle,
+      [data-color-scheme="light"] .ec-collapse__toggle {
+        background-color: rgba(0, 0, 0, 0.05);
+        border-color: rgba(0, 0, 0, 0.15);
+      }
+
+      html.light .ec-collapse__toggle:hover,
+      html:not(.dark) body.light .ec-collapse__toggle:hover,
+      [data-theme="light"] .ec-collapse__toggle:hover,
+      [data-color-scheme="light"] .ec-collapse__toggle:hover {
+        background-color: rgba(0, 0, 0, 0.08);
+        border-color: rgba(0, 0, 0, 0.25);
+      }
+
+      /* Method 3: prefers-color-scheme media query (only when no explicit theme is set) */
+      @media (prefers-color-scheme: light) {
+        html:not([data-theme="dark"]):not(.dark) .ec-collapse__gradient {
+          background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            var(--ec-collapse-bg-color, var(--code-background, #f6f7f9)) 100%
+          );
+        }
+
+        html:not([data-theme="dark"]):not(.dark) .ec-collapse__toggle {
+          background-color: rgba(0, 0, 0, 0.05);
+          border-color: rgba(0, 0, 0, 0.15);
+        }
+
+        html:not([data-theme="dark"]):not(.dark) .ec-collapse__toggle:hover {
+          background-color: rgba(0, 0, 0, 0.08);
+          border-color: rgba(0, 0, 0, 0.25);
+        }
+      }
+
       /* Header toggle button (in frame header) */
       .ec-collapse .frame .header,
       .ec-collapse .frame figcaption {
-        display: flex !important;
+        display: flex;
         align-items: center;
-        justify-content: flex-start !important;
+        justify-content: flex-start;
       }
 
       .ec-collapse .frame.is-terminal .header .title {
@@ -218,7 +269,7 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
 
         if (!shouldCollapseBlock) return;
 
-        const blockId = `collapse-${Math.random().toString(36).substr(2, 9)}`;
+        const blockId = `collapse-${Math.random().toString(36).substring(2, 11)}`;
 
         // Overlay toggle button (bottom of code block)
         const toggleButton = h(
@@ -359,6 +410,8 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
               class: wrapperClasses.join(" "),
               id: blockId,
               "data-collapse-preview-lines": config.previewLines.toString(),
+              "data-expanded-announcement": config.expandedAnnouncement,
+              "data-collapsed-announcement": config.collapsedAnnouncement,
             },
             [contentWrapper, toggleButton]
           );
@@ -385,8 +438,9 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
         if (window.ecCollapsibleInit) return;
         window.ecCollapsibleInit = true;
 
-        const LINE_HEIGHT_PX = 16 * 0.9 * 1.5;
-        const BASE_PADDING = 56;
+        // Fallback values - will be overridden by dynamic calculation
+        const FALLBACK_LINE_HEIGHT = 21.6; // 16 * 0.9 * 1.5
+        const FALLBACK_PADDING = 56;
 
         // Create live region for screen reader announcements
         function getOrCreateLiveRegion() {
@@ -402,15 +456,36 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
           return liveRegion;
         }
 
-        function announceStateChange(isExpanded) {
+        function announceStateChange(frame, isExpanded) {
           const liveRegion = getOrCreateLiveRegion();
-          liveRegion.textContent = isExpanded ? 'Code block expanded' : 'Code block collapsed';
+          // Use configurable announcement text from data attributes
+          const expandedText = frame.dataset.expandedAnnouncement || 'Code block expanded';
+          const collapsedText = frame.dataset.collapsedAnnouncement || 'Code block collapsed';
+          liveRegion.textContent = isExpanded ? expandedText : collapsedText;
           // Clear after announcement to allow repeated announcements
           setTimeout(() => { liveRegion.textContent = ''; }, 1000);
         }
 
-        function calcPreviewHeight(lines) {
-          return (lines * LINE_HEIGHT_PX) + BASE_PADDING;
+        function calcPreviewHeight(frame, previewLines) {
+          // Try to dynamically calculate line height from the actual code element
+          const codeElement = frame.querySelector('code');
+          if (codeElement) {
+            const computedStyle = window.getComputedStyle(codeElement);
+            const lineHeight = parseFloat(computedStyle.lineHeight) || FALLBACK_LINE_HEIGHT;
+
+            // Get padding from the pre element
+            const preElement = frame.querySelector('pre');
+            let padding = FALLBACK_PADDING;
+            if (preElement) {
+              const preStyle = window.getComputedStyle(preElement);
+              padding = parseFloat(preStyle.paddingTop) + parseFloat(preStyle.paddingBottom);
+            }
+
+            return (previewLines * lineHeight) + padding;
+          }
+
+          // Fallback to hardcoded values
+          return (previewLines * FALLBACK_LINE_HEIGHT) + FALLBACK_PADDING;
         }
 
         function toggleCollapse(frame, btn) {
@@ -436,7 +511,7 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
           allButtons.forEach(b => b.setAttribute('aria-expanded', newState === 'expanded' ? 'true' : 'false'));
 
           // Announce state change to screen readers
-          announceStateChange(newState === 'expanded');
+          announceStateChange(frame, newState === 'expanded');
         }
 
         function initCollapseButtons() {
@@ -452,7 +527,7 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
             if (!frame.dataset.heightInit) {
               frame.dataset.heightInit = 'true';
               const previewLines = parseInt(frame.dataset.collapsePreviewLines || '8', 10);
-              frame.style.setProperty('--ec-collapse-preview-height', calcPreviewHeight(previewLines) + 'px');
+              frame.style.setProperty('--ec-collapse-preview-height', calcPreviewHeight(frame, previewLines) + 'px');
             }
 
             btn.addEventListener('click', (e) => {
@@ -462,15 +537,24 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
           });
         }
 
+        // Debounce utility
+        function debounce(fn, delay) {
+          let timeoutId;
+          return function(...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => fn.apply(this, args), delay);
+          };
+        }
+
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', initCollapseButtons);
         } else {
           initCollapseButtons();
         }
 
-        new MutationObserver(() => {
-          initCollapseButtons();
-        }).observe(document.body, { childList: true, subtree: true });
+        // Debounced MutationObserver to avoid excessive calls
+        const debouncedInit = debounce(initCollapseButtons, 100);
+        new MutationObserver(debouncedInit).observe(document.body, { childList: true, subtree: true });
       })();
       `,
     ],

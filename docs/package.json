@@ -18,7 +18,8 @@
     "expressive-code-collapsible": "workspace:*",
     "expressive-code-fullscreen": "file:..\\..\\expressive-code-fullscreen\\packages\\expressive-code-fullscreen",
     "expressive-code-language-badge": "^1.1.0",
-    "sharp": "^0.34.5"
+    "sharp": "^0.34.5",
+    "starlight-package-managers": "^0.7.0"
   },
   "engines": {
     "node": "^18.17.1 || ^20.3.0 || >=21.0.0"

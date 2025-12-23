@@ -6,25 +6,27 @@ The plugin can be configured with global options and per-block overrides using m
 
 ## Global Options
 
-Pass an options object to `expressiveCodeCollapsible()` in your Astro config:
+Pass an options object to `pluginCollapsible()` in your Expressive Code config:
 
-```js 
+```js
 // astro.config.mjs
 import starlight from '@astrojs/starlight'
 import { defineConfig } from 'astro/config'
-import expressiveCodeCollapsible from 'expressive-code-collapsible'
+import { pluginCollapsible } from 'expressive-code-collapsible'
 
 export default defineConfig({
   integrations: [
     starlight({
       expressiveCode: {
         plugins: [
-          expressiveCodeCollapsible({
+          pluginCollapsible({
             lineThreshold: 15,
             previewLines: 8,
             defaultCollapsed: true,
             expandButtonText: 'Show more',
             collapseButtonText: 'Show less',
+            expandedAnnouncement: 'Code block expanded',
+            collapsedAnnouncement: 'Code block collapsed',
           }),
         ],
       },
@@ -68,6 +70,20 @@ Text displayed on the overlay button when the code block is collapsed. This is t
 **Default:** `"Show less"`
 
 Text displayed on the overlay button when the code block is expanded. This is the button that appears at the bottom of the expanded code block.
+
+### `expandedAnnouncement`
+
+**Type:** `string`
+**Default:** `"Code block expanded"`
+
+Screen reader announcement text when a code block is expanded. This is announced via an ARIA live region for accessibility. Useful for internationalization.
+
+### `collapsedAnnouncement`
+
+**Type:** `string`
+**Default:** `"Code block collapsed"`
+
+Screen reader announcement text when a code block is collapsed. This is announced via an ARIA live region for accessibility. Useful for internationalization.
 
 ## Per-Block Overrides
 

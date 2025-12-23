@@ -9,4 +9,8 @@ export interface PluginCollapsibleOptions {
   expandButtonText?: string
   /** Button text when expanded. Default: `"Show less"` */
   collapseButtonText?: string
+  /** Screen reader announcement when expanded. Default: `"Code block expanded"` */
+  expandedAnnouncement?: string
+  /** Screen reader announcement when collapsed. Default: `"Code block collapsed"` */
+  collapsedAnnouncement?: string
 }
