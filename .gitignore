@@ -1,6 +1,8 @@
 # build output
 dist/
 
+my-docs/
+
 expand/
 
 # generated types
