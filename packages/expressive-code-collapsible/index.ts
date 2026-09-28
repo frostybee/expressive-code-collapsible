@@ -16,15 +16,22 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
 
       .ec-collapse__content {
         position: relative;
+        overflow: clip;
+        transition: height 0.3s ease;
       }
 
       .ec-collapse.ec-collapse--collapsed .ec-collapse__content {
-        max-height: var(--ec-collapse-preview-height, 280px);
-        overflow: hidden;
+        height: var(--ec-collapse-preview-height, 280px);
       }
 
       .ec-collapse.ec-collapse--expanded .ec-collapse__content {
-        max-height: none;
+        height: auto;
+      }
+
+      @supports (interpolate-size: allow-keywords) {
+        .ec-collapse {
+          interpolate-size: allow-keywords;
+        }
       }
 
       .ec-collapse__gradient {
@@ -243,6 +250,7 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
 
       /* Reduced motion preference */
       @media (prefers-reduced-motion: reduce) {
+        .ec-collapse__content,
         .ec-collapse__gradient,
         .ec-collapse__toggle,
         .ec-collapse__icon,
