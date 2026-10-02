@@ -17,6 +17,10 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
       .ec-collapse__content {
         position: relative;
         overflow: clip;
+      }
+
+      /* Enabled on first toggle so setting the measured preview height on load does not animate */
+      .ec-collapse.ec-collapse--animated .ec-collapse__content {
         transition: height 0.3s ease;
       }
 
@@ -250,7 +254,7 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
 
       /* Reduced motion preference */
       @media (prefers-reduced-motion: reduce) {
-        .ec-collapse__content,
+        .ec-collapse.ec-collapse--animated .ec-collapse__content,
         .ec-collapse__gradient,
         .ec-collapse__toggle,
         .ec-collapse__icon,
@@ -500,6 +504,8 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
           const isCollapsed = frame.classList.contains('ec-collapse--collapsed');
           const newState = isCollapsed ? 'expanded' : 'collapsed';
 
+          frame.classList.add('ec-collapse--animated');
+
           if (isCollapsed) {
             frame.classList.remove('ec-collapse--collapsed');
             frame.classList.add('ec-collapse--expanded');
@@ -535,7 +541,11 @@ export function pluginCollapsible(options: PluginCollapsibleOptions = {}) {
             if (!frame.dataset.heightInit) {
               frame.dataset.heightInit = 'true';
               const previewLines = parseInt(frame.dataset.collapsePreviewLines || '8', 10);
-              frame.style.setProperty('--ec-collapse-preview-height', calcPreviewHeight(frame, previewLines) + 'px');
+              // Never exceed the code's own height, so short blocks are not padded with empty space
+              const code = frame.querySelector('.ec-collapse__content > :first-child');
+              const fullHeight = code ? code.getBoundingClientRect().height : Infinity;
+              const previewHeight = Math.min(calcPreviewHeight(frame, previewLines), fullHeight);
+              frame.style.setProperty('--ec-collapse-preview-height', previewHeight + 'px');
             }
 
             btn.addEventListener('click', (e) => {
