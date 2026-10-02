@@ -1,5 +1,11 @@
 # expressive-code-collapsible
 
+## 1.1.0
+
+### Minor Changes
+
+- 5148c42: Animate expanding and collapsing code blocks in browsers that support `interpolate-size`
+
 ## 1.0.0
 
 ### Major Changes
